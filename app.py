@@ -4,13 +4,21 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.chrome.options import Options
 import requests
 from PIL import Image
 
 app = Flask(__name__)
 api = Api(app)
 
-def get_images_from_google(driver, search_query, num_images):
+def get_images_from_google(search_query, num_images):
+    chrome_options = Options()
+    chrome_options.add_argument("--headless")
+    chrome_options.add_argument("--no-sandbox")
+    chrome_options.add_argument("--disable-dev-shm-usage")
+    
+    driver = webdriver.Chrome(options=chrome_options)
+
     driver.get("https://images.google.com/")
     search_box = driver.find_element(By.NAME, "q")
     search_box.send_keys(search_query)
@@ -54,7 +62,9 @@ def get_images_from_google(driver, search_query, num_images):
             except Exception as e:
                 print(f"Error clicking thumbnail: {e}")
                 continue
+    driver.quit()
     return list(urls)
+
 
 class Scrape(Resource):
     def get(self):
@@ -62,12 +72,12 @@ class Scrape(Resource):
         if not query:
             return {'error': 'Missing query parameter'}, 400
 
-        driver = webdriver.Chrome()
         try:
-            image_urls = get_images_from_google(driver, query, 6)
+            image_urls = get_images_from_google(query, 6)
             return image_urls
-        finally:
-            driver.quit()
+        except Exception as e:
+            print(f"Error: {e}")
+            return {'error': 'Internal Server Error'}, 500
 
 api.add_resource(Scrape, '/scrape')
 
