@@ -19,8 +19,8 @@ def get_images_from_google(search_query, num_images):
     chrome_options.add_argument("--no-sandbox")
     chrome_options.add_argument("--disable-dev-shm-usage")
     
-    chrome_driver_path = './chromedriver/chromedriver'
-    
+    chrome_driver_path = "/Users/lucas/webscraper/chromedriver"
+
     
     service = Service(chrome_driver_path)
     driver = webdriver.Chrome(service=service, options=chrome_options)
