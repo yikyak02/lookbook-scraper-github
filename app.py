@@ -7,9 +7,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 import os
-from dotenv import load_dotenv
 
-load_dotenv()
 
 
 app = Flask(__name__)
@@ -21,11 +19,8 @@ def get_images_from_google(search_query, num_images):
     chrome_options.add_argument("--no-sandbox")
     chrome_options.add_argument("--disable-dev-shm-usage")
     
-    chrome_bin = os.getenv('CHROME_BIN')
-    chrome_driver_path = os.getenv('CHROME_DRIVER_PATH')
+    chrome_driver_path = './chromedriver/chromedriver'
     
-    if chrome_bin:
-        chrome_options.binary_location = chrome_bin
     
     service = Service(chrome_driver_path)
     driver = webdriver.Chrome(service=service, options=chrome_options)
