@@ -73,7 +73,7 @@ class Scrape(Resource):
             return {'error': 'Missing query parameter'}, 400
 
         try:
-            image_urls = get_images_from_google(query, 6)
+            image_urls = get_images_from_google(query, 2)
             return image_urls
         except Exception as e:
             print(f"Error: {e}")
