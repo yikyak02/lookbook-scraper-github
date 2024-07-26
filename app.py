@@ -4,9 +4,13 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
-import requests
-from PIL import Image
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
 
 app = Flask(__name__)
 api = Api(app)
@@ -17,7 +21,14 @@ def get_images_from_google(search_query, num_images):
     chrome_options.add_argument("--no-sandbox")
     chrome_options.add_argument("--disable-dev-shm-usage")
     
-    driver = webdriver.Chrome(options=chrome_options)
+    chrome_bin = os.getenv('CHROME_BIN')
+    chrome_driver_path = os.getenv('CHROME_DRIVER_PATH')
+    
+    if chrome_bin:
+        chrome_options.binary_location = chrome_bin
+    
+    service = Service(chrome_driver_path)
+    driver = webdriver.Chrome(service=service, options=chrome_options)
 
     driver.get("https://images.google.com/")
     search_box = driver.find_element(By.NAME, "q")
