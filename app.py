@@ -6,8 +6,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
-import os
-
+from webdriver_manager.chrome import ChromeDriverManager
 
 
 app = Flask(__name__)
@@ -19,10 +18,7 @@ def get_images_from_google(search_query, num_images):
     chrome_options.add_argument("--no-sandbox")
     chrome_options.add_argument("--disable-dev-shm-usage")
     
-    chrome_driver_path = "./driver/chromedriver"
-
-    
-    service = Service(chrome_driver_path)
+    service = Service(ChromeDriverManager().install())
     driver = webdriver.Chrome(service=service, options=chrome_options)
 
     driver.get("https://images.google.com/")
@@ -30,7 +26,7 @@ def get_images_from_google(search_query, num_images):
     search_box.send_keys(search_query)
     search_box.submit()
 
-    wait = WebDriverWait(driver, 1)
+    wait = WebDriverWait(driver, 10)
     try:
         wait.until(EC.presence_of_element_located((By.CLASS_NAME, "s6JM6d")))
         driver.execute_script("""
@@ -70,7 +66,6 @@ def get_images_from_google(search_query, num_images):
                 continue
     driver.quit()
     return list(urls)
-
 
 class Scrape(Resource):
     def get(self):
